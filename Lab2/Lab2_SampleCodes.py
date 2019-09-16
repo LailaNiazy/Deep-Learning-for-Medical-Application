@@ -11,9 +11,10 @@ tf.config.gpu.set_per_process_memory_growth(True)
 
 # ## Methods
 
-# In[1]:
+# In[11]:
 
 
+import matplotlib.pyplot as plt
 def plotter(History):
     #Training vs Validation Learning loss 
     plt.figure(figsize=(4, 4))
@@ -31,8 +32,10 @@ def plotter(History):
     #Train and test accuracy plot
     plt.figure(figsize=(4,4))
     plt.title("Accuracy Learning Curve")
-    plt.plot(History.history["binary_accuracy"], label="binary_accuracy")
-    plt.plot(History.history["val_binary_accuracy"], label="val_binary_accuracy")
+    #plt.plot(History.history["binary_accuracy"], label="binary_accuracy")
+    #plt.plot(History.history["val_binary_accuracy"], label="val_binary_accuracy")
+    plt.plot(History.history["categorical_accuracy"], label="categorical_accuracy")
+    plt.plot(History.history["val_categorical_accuracy"], label="val_categorical_accuracy")
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend(); 
@@ -131,7 +134,7 @@ def get_train_test_data(train_data_path, test_data_path, train_list, test_list):
    
 
 
-# In[1]:
+# In[3]:
 
 
 # AlexNet building the model
@@ -500,6 +503,257 @@ def modelVGG(img_ch,img_width,img_height, batchNormalization, spatial_dropout, S
 # In[5]:
 
 
+# VGG2 model
+
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import MaxPooling2D
+
+
+#Model definition
+def modelVGG2(img_ch,img_width,img_height, batchNormalization, spatial_dropout, SDRate, dropout, dropoutRate):
+
+    model = Sequential()
+    
+    # Conv Block 1
+    # 1.1
+    model.add(Conv2D(filters=64, input_shape=(img_width, img_height, img_ch),
+                     kernel_size=(3,3), strides=(1,1), padding='same'))
+     #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+    
+    #1.2
+    model.add(Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    #1.3    
+    model.add(Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    
+     # Conv Block 2
+        
+    # 2.1
+    model.add(Conv2D(filters=128, input_shape=(img_width, img_height, img_ch),
+                     kernel_size=(3,3), strides=(1,1), padding='same'))
+     #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+    
+    #2.2
+    model.add(Conv2D(filters=128, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    
+    #Conv Block 3
+    
+     # 3.1
+    model.add(Conv2D(filters=256, input_shape=(img_width, img_height, img_ch),
+                     kernel_size=(3,3), strides=(1,1), padding='same'))
+     #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+    
+    #3.2
+    model.add(Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    #3.3    
+    model.add(Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    
+    #Conv Block 4
+    
+    # 4.1
+    model.add(Conv2D(filters=512, input_shape=(img_width, img_height, img_ch),
+                     kernel_size=(3,3), strides=(1,1), padding='same'))
+     #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+    
+    #4.2
+    model.add(Conv2D(filters=512, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    #4.3    
+    model.add(Conv2D(filters=512, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    
+    #Conv Block 5
+    
+    # 5.1
+    model.add(Conv2D(filters=512, input_shape=(img_width, img_height, img_ch),
+                     kernel_size=(3,3), strides=(1,1), padding='same'))
+     #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+    
+    #5.2
+    model.add(Conv2D(filters=512, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    #5.3    
+    model.add(Conv2D(filters=512, kernel_size=(3,3), strides=(1,1), padding='same'))
+    
+    #Add batch Normalization
+    if batchNormalization:
+        model.add(BatchNormalization(axis=-1))
+    
+    model.add(Activation('relu'))
+    
+    #Add spatial Dropout
+    if spatial_dropout:
+        model.add(SpatialDropout2D(SDRate))
+        
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    
+    #Dense Block
+    
+    model.add(Flatten())
+    
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    
+    #Add Dropout
+    if dropout:
+        model.add(Dropout(dropoutRate))
+    
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    
+    #Add Dropout
+    if dropout:
+        model.add(Dropout(dropoutRate))
+        
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    
+    #Add Dropout
+    if dropout:
+        model.add(Dropout(dropoutRate))
+     
+    #Output
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
+
+    model.summary()
+    return model
+
+
+# In[6]:
+
+
 # Execute a model
 def execute(model, Input, Target ,loss_type, optim, LR, acc_metric,epoch, batch_s, x_test,y_test):
     
@@ -513,7 +767,7 @@ def execute(model, Input, Target ,loss_type, optim, LR, acc_metric,epoch, batch_
     return History
 
 
-# In[23]:
+# In[7]:
 
 
 # Load data
@@ -528,13 +782,13 @@ x_train, x_test, y_train, y_test = data_loader(img_w, img_h, label1, label1, dat
 
 # ## Tasks
 
-# In[ ]:
+# In[9]:
 
 
 ## Task 1
 
 
-# In[7]:
+# In[10]:
 
 
 # Task 1a
@@ -569,7 +823,7 @@ History_without_BN = execute(model_without_BN, Input, Target ,loss_type, optim, 
 plotter(History_without_BN)
 
 
-# In[ ]:
+# In[11]:
 
 
 # Clear Variables
@@ -577,7 +831,7 @@ plotter(History_without_BN)
 del model_without_BN, History_without_BN
 
 
-# In[8]:
+# In[12]:
 
 
 # Task 1b:
@@ -612,7 +866,7 @@ History_with_BN = execute(model_with_BN, Input, Target ,loss_type, optim, LR, ac
 plotter(History_with_BN)
 
 
-# In[ ]:
+# In[13]:
 
 
 # Clear Variables
@@ -620,7 +874,7 @@ plotter(History_with_BN)
 del model_with_BN, History_with_BN
 
 
-# In[ ]:
+# In[14]:
 
 
 # Task 1b: The final training accuracy when adding batch normalization is: 1.
@@ -628,7 +882,7 @@ del model_with_BN, History_with_BN
 # The effect of the batch normalization layers is stabilize the learning process and reducing the number of training epochs required. It is very useful for deep architectures.
 
 
-# In[9]:
+# In[15]:
 
 
 # Task 1c
@@ -664,7 +918,7 @@ History_1c_NoBN = execute(model_1c_NoBN, Input, Target ,loss_type, optim, LR, ac
 plotter(History_1c_NoBN)
 
 
-# In[ ]:
+# In[16]:
 
 
 # Clear Variables
@@ -672,7 +926,7 @@ plotter(History_1c_NoBN)
 del model_1c_NoBN, History_1c_NoBN
 
 
-# In[13]:
+# In[17]:
 
 
 # Model with batch normalization
@@ -706,7 +960,7 @@ History_1c_BN = execute(model_1c_BN, Input, Target ,loss_type, optim, LR, acc_me
 plotter(History_1c_BN)
 
 
-# In[ ]:
+# In[18]:
 
 
 # Clear Variables
@@ -714,7 +968,7 @@ plotter(History_1c_BN)
 del model_1c_BN, History_1c_BN
 
 
-# In[10]:
+# In[ ]:
 
 
 # Task 2 - Add dropout layer
@@ -758,7 +1012,7 @@ plotter(History_2BN)
 del model_2BN, History_2BN
 
 
-# In[14]:
+# In[ ]:
 
 
 #Without BN
@@ -801,7 +1055,7 @@ plotter(History_2NotBN)
 del model_2NotBN, History_2NotBN
 
 
-# In[17]:
+# In[ ]:
 
 
 # Task 3
@@ -844,7 +1098,7 @@ plotter(History_3_dropout)
 del model_3_Dropout, History_3_Dropout
 
 
-# In[18]:
+# In[ ]:
 
 
 # Model without dropout
@@ -886,7 +1140,7 @@ plotter(History_3_NoDropout)
 del model_3_NoDropout, History_3_NoDropout
 
 
-# In[27]:
+# In[ ]:
 
 
 # Task 4
@@ -916,7 +1170,7 @@ History_VGG_skin = execute(VGG_skin, Input, Target ,loss_type, optim, LR, acc_me
 plotter(History_VGG_skin)
 
 
-# In[15]:
+# In[ ]:
 
 
 # clear variables
@@ -924,7 +1178,7 @@ plotter(History_VGG_skin)
 del VGG_skin, History_VGG_skin
 
 
-# In[16]:
+# In[ ]:
 
 
 # Load Bone images
@@ -939,7 +1193,7 @@ label2 = 'NFF'
 x_train, x_test, y_train, y_test = data_loader(img_w, img_h, label1, label1, data_path)
 
 
-# In[21]:
+# In[ ]:
 
 
 # VGG for bone images
@@ -968,7 +1222,7 @@ History_VGG_bone = execute(VGG_bone, Input, Target ,loss_type, optim, LR, acc_me
 plotter(History_VGG_bone)
 
 
-# In[22]:
+# In[ ]:
 
 
 # clear variables
@@ -978,7 +1232,7 @@ del VGG_bone, History_VGG_bone
 
 # ### Data Augmentation
 
-# In[29]:
+# In[16]:
 
 
 # Task5a
@@ -1039,7 +1293,7 @@ better_contrast = exposure.rescale_intensity(Img, in_range=(min_val, max_val))
 show_paired(Img, better_contrast, 'Intensity Rescaling')
 
 
-# In[32]:
+# In[17]:
 
 
 # Task 5b
@@ -1070,7 +1324,7 @@ for i, new_images in enumerate(images_flow):
         break 
 
 
-# In[8]:
+# In[11]:
 
 
 # Task 6
@@ -1109,11 +1363,11 @@ def DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horiz
     #Train data
     train_datagen = ImageDataGenerator(rotation_range = rotation_range, width_shift_range = width_shift, height_shift_range=height_shift_range,
                                        horizontal_flip = horizontal_flip, rescale = rescale)
-    train_generator = train_datagen.flow_from_directory(TRAIN_DIR,target_size=(128, 128))
+    train_generator = train_datagen.flow_from_directory(TRAIN_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
     
     #Val data
     val_datagen = ImageDataGenerator(rescale = rescale)
-    val_generator = val_datagen.flow_from_directory(VAL_DIR,target_size=(128, 128))
+    val_generator = val_datagen.flow_from_directory(VAL_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
     
     
     return train_generator, val_generator 
@@ -1124,7 +1378,7 @@ model = modelAlexNet(img_ch, img_width, img_height, Base, batchNormalization, dr
 
 model.compile(loss='binary_crossentropy',optimizer = Adam(lr=LR), metrics=['binary_accuracy'])
 
-History = model.fit_generator( train_generator, steps_per_epoch=2000, epochs=80, validation_data=val_generator, validation_steps=800)
+History = model.fit_generator( train_generator,  epochs=80, validation_data=val_generator)
     
 plotter(History)
 
@@ -1132,13 +1386,139 @@ plotter(History)
 # In[ ]:
 
 
+# Task 7
+
+#Skin images
+# Import required libraries …
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.layers import Activation, Flatten, Conv2D, Dense, MaxPooling2D, MaxPooling2D,Dropout, BatchNormalization, SpatialDropout2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import SGD, Adam
+
+import numpy as np
+from skimage.io import imread
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, array_to_img
+
+# Data and model parameters
+# image generator parameters
+rotation_range = 10
+width_shift = 0.1
+height_shift_range = 0.1,
+rescale = 1./255
+horizontal_flip = True
+
+# model parameters
+img_ch = 1
+img_width = 128
+img_height = 128
+batchNormalization = True
+dropout = True
+dropoutRate = 0.4
+spatial_dropout = False
+SDRate = 0
+Base = 64
+LR = 0.00001
+b_size = 8
+TRAIN_DIR = '/Lab1/Lab2/Skin/train/' 
+VAL_DIR = '/Lab1/Lab2/Skin/validation/'
+
+def DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR):
+    
+    #Train data
+    train_datagen = ImageDataGenerator(rotation_range = rotation_range, width_shift_range = width_shift, height_shift_range=height_shift_range,
+                                       horizontal_flip = horizontal_flip, rescale = rescale)
+    train_generator = train_datagen.flow_from_directory(TRAIN_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
+    
+    #Val data
+    val_datagen = ImageDataGenerator(rescale = rescale)
+    val_generator = val_datagen.flow_from_directory(VAL_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
+    
+    
+    return train_generator, val_generator 
+
+train_generator, val_generator = DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR)
+
+model = modelVGG2(img_ch,img_width,img_height, batchNormalization, spatial_dropout, SDRate, dropout, dropoutRate)
+
+model.compile(loss='binary_crossentropy',optimizer = Adam(lr=LR), metrics=['binary_accuracy'])
+
+History = model.fit_generator( train_generator,  epochs=80, validation_data=val_generator)
+    
+plotter(History)
+
+
+# In[20]:
+
+
+#Bone images
+# Import required libraries …
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.layers import Activation, Flatten, Conv2D, Dense, MaxPooling2D, MaxPooling2D,Dropout, BatchNormalization, SpatialDropout2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.optimizers import SGD, Adam
+
+# Data and model parameters
+# image generator parameters
+rotation_range = 10
+width_shift = 0.1
+height_shift_range = 0.1,
+rescale = 1./255
+horizontal_flip = True
+
+# model parameters
+img_ch = 1
+img_width = 128
+img_height = 128
+batchNormalization = True
+dropout = True
+dropoutRate = 0.4
+spatial_dropout = False
+SDRate = 0
+Base = 64
+LR = 0.00001
+b_size = 8
+TRAIN_DIR = '/Lab1/Lab2/Bone/train/' 
+VAL_DIR = '/Lab1/Lab2/Bone/validation/'
+
+def DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR):
+    
+    #Train data
+    train_datagen = ImageDataGenerator(rotation_range = rotation_range, width_shift_range = width_shift, height_shift_range=height_shift_range,
+                                       horizontal_flip = horizontal_flip, rescale = rescale)
+    train_generator = train_datagen.flow_from_directory(TRAIN_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
+    
+    #Val data
+    val_datagen = ImageDataGenerator(rescale = rescale)
+    val_generator = val_datagen.flow_from_directory(VAL_DIR,target_size=(128, 128), color_mode="grayscale",class_mode='binary')
+    
+    
+    return train_generator, val_generator 
+
+train_generator, val_generator = DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR)
+
+model = modelVGG2(img_ch,img_width,img_height, batchNormalization, spatial_dropout, SDRate, dropout, dropoutRate)
+
+model.compile(loss='binary_crossentropy',optimizer = Adam(lr=LR), metrics=['binary_accuracy'])
+
+History = model.fit_generator( train_generator,  epochs=80, validation_data=val_generator)
+    
+plotter(History)
+
+
+# In[8]:
+
+
 # Task 8
 import os
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, Model 
 from tensorflow.keras.layers import Flatten, Dense, Dropout, ZeroPadding2D
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras import applications
 import numpy as np
 
@@ -1194,55 +1574,185 @@ def VGG_16(weights_path=None):
     model.summary()
     
 
-# parameters (TODO)
+
+def VGG_transferLearning(label1, label2,train_data_dir,validation_dir,img_width, img_height, LR, base):
+    
+    # number of data for each class
+    Len_C1_Train = get_length(train_data_dir,label1)
+    Len_C2_Train = get_length(train_data_dir,label2)
+    Len_C1_Val = get_length(validation_dir,label1)
+    Len_C2_Val = get_length(validation_dir,label2)
+
+    # loading the pre-trained model
+    model = applications.VGG16(include_top=False, weights='imagenet',input_shape = (img_width, img_height, 3))
+   
+    # Feature extraction from pretrained VGG (training data)
+    datagen = ImageDataGenerator(rescale=1. / 255)
+
+    train_generator = datagen.flow_from_directory(
+            train_data_dir,
+            target_size=(img_width, img_height),
+            batch_size=batch_size,
+            class_mode=None,
+            shuffle=False)
+
+    features_train = model.predict_generator(
+            train_generator,
+            (Len_C1_Train+Len_C2_Train) // batch_size, max_queue_size=1)
+
+
+    # To DO: Feature extraction from pretrained VGG (validation data)
+    datagen = ImageDataGenerator(rescale=1. / 255)
+
+    validation_generator = datagen.flow_from_directory(
+            validation_data_dir,
+            target_size=(img_width, img_height),
+            batch_size=batch_size,
+            class_mode=None,
+            shuffle=False)
+
+    features_validation = model.predict_generator(
+            validation_generator,
+            (Len_C1_Val+Len_C2_Val) // batch_size, max_queue_size=1)
+
+
+
+    # training a small MLP with extracted features from the pre-trained model
+    train_data = features_train
+    train_labels = np.array([0] * int(Len_C1_Train) + [1] * int(Len_C2_Train))
+    #print("train data shape: ", train_data.shape,", train labels shape: ", train_labels.shape)
+
+    validation_data = features_validation
+    validation_labels = np.array([0] * int(Len_C1_Val) + [1] * int(Len_C2_Val))
+    #print("validation shape: ", validation_data.shape,", validation labels shape: ", validation_labels.shape)
+
+
+     # TODO: Building the MLP model    
+    
+    model = Sequential()
+    model.add(Flatten(input_shape = (train_data.shape[1],train_data.shape[2],train_data.shape[3])))
+    model.add(Flatten())
+    model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='sigmoid'))
+    
+    model.compile(loss='binary_crossentropy',optimizer = Adam(lr=LR), metrics=['binary_accuracy'])
+    History = model.fit(x=train_data, y=train_labels,  epochs=80, validation_data=(validation_data,validation_labels))
+    plotter(History)
+    
+    return 
+
+
+# In[ ]:
+
+
+# Task 9
+
+
+# parameters for Bone images
 train_data_dir = '/Lab1/Lab2/Bone/train/'
 validation_data_dir = '/Lab1/Lab2/Bone/validation/'
-img_width, img_height = ???
-epochs = ???
-batch_size = ???
-LR = ???
-# number of data for each class
-Len_C1_Train = get_length(train_data_dir,'AFF')
-Len_C2_Train = ???
-Len_C1_Val = ???
-Len_C2_Val = ???
+img_width, img_height = 224,224
+epochs = 150
+batch_size = 8
+LR = 0.00001
+label1 = 'AFF'
+label2 = 'NFF'
+base = 8
 
-# loading the pre-trained model
-model = applications.VGG16(include_top=False, weights='imagenet')
-model.summary()
+VGG_transferLearning(label1, label2,train_data_dir,validation_data_dir,img_width, img_height, LR, base)
 
 
-# Feature extraction from pretrained VGG (training data)
-datagen = ImageDataGenerator(rescale=1. / 255)
-
-train_generator = datagen.flow_from_directory(
-        train_data_dir,
-        target_size=(img_width, img_height),
-        batch_size=batch_size,
-        class_mode=None,
-        shuffle=False)
-
-features_train = model.predict_generator(
-        train_generator,
-        (Len_C1_Train+Len_C2_Train) // batch_size, max_queue_size=1)
+# In[9]:
 
 
-# To DO: Feature extraction from pretrained VGG (validation data)
-get_ipython().run_line_magic('pinfo2', '')
+# parameters for Skin images
+train_data_dir = '/Lab1/Lab2/Skin/train/'
+validation_data_dir = '/Lab1/Lab2/Skin/validation/'
+img_width, img_height = 224,224
+epochs = 150
+batch_size = 8
+LR = 0.00001
+label1 = 'Mel'    
+label2 = 'Nevi'
+base = 8
+
+VGG_transferLearning(label1, label2,train_data_dir,validation_data_dir,img_width, img_height, LR, base)
 
 
-# training a small MLP with extracted features from the pre-trained model
-train_data = features_train
-train_labels = np.array([0] * int(Len_C1_Train) + [1] * int(Len_C2_Train))
+# ### Data Visualization
 
-validation_data = features_validation
-validation_labels = np.array([0] * int(Len_C1_Val) + [1] * int(Len_C2_Val))
+# In[ ]:
 
-# TODO: Building the MLP model
-get_ipython().run_line_magic('pinfo2', '')
 
-# TODO: Compile and train the model, plot learning curves
-get_ipython().run_line_magic('pinfo2', '')
+# Task 10 network
+def model(input_shape):
+    model = Sequential([
+    Conv2D(64, (3, 3), input_shape=input_shape, padding='same', activation='relu'),
+    Conv2D(64, (3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+    Conv2D(128, (3, 3), activation='relu', padding='same'),
+    Conv2D(128, (3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+    Conv2D(256, (3, 3), activation='relu', padding='same'),
+    Conv2D(256, (3, 3), activation='relu', padding='same'),
+    Conv2D(256, (3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+    Conv2D(512, (3, 3), activation='relu', padding='same'),
+    Conv2D(512, (3, 3), activation='relu', padding='same'),
+    Conv2D(512, (3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+    Conv2D(512, (3, 3), activation='relu', padding='same'),
+    Conv2D(512, (3, 3), activation='relu', padding='same'),
+    Conv2D(512, (3, 3), activation='relu', padding='same', name = "Last_ConvLayer"),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+    Flatten(),
+    Dense(4096, activation='relu'),
+    Dense(4096, activation='relu'),
+    Dense(2, activation='softmax')
+    ])
+
+    model.summary()
+    return model
+
+#Model parameters
+
+TRAIN_DIR= '/Lab1/Lab2/Bone/train/'
+VAL_DIR = '/Lab1/Lab2/Bone/validation/'
+img_width, img_height = 224,224
+epochs = 150
+batch_size = 8
+LR = 0.00001
+
+#Data augmentation
+def DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR):
+    
+    #Train data
+    train_datagen = ImageDataGenerator(rotation_range = rotation_range, width_shift_range = width_shift, height_shift_range=height_shift_range,
+                                       horizontal_flip = horizontal_flip, rescale = rescale)
+    train_generator = train_datagen.flow_from_directory(TRAIN_DIR,target_size=(224, 224), color_mode="grayscale",class_mode='categorical')
+    
+    #Val data
+    val_datagen = ImageDataGenerator(rescale = rescale)
+    val_generator = val_datagen.flow_from_directory(VAL_DIR,target_size=(224, 224), color_mode="grayscale",class_mode='categorical')
+    
+    
+    return train_generator, val_generator 
+
+# image generator parameters
+rotation_range = 10
+width_shift = 0.1
+height_shift_range = 0.1,
+rescale = 1./255
+horizontal_flip = True
+
+
+train_generator, val_generator = DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip, TRAIN_DIR, VAL_DIR)
+
+model = model((img_width, img_height,1))
+model.compile(loss='categorical_crossentropy',optimizer = Adam(lr=LR), metrics=['categorical_accuracy'])
+History = model.fit_generator(train_generator,  epochs=80, validation_data=val_generator)
+plotter(History)
 
 
 # In[ ]:
@@ -1252,7 +1762,7 @@ get_ipython().run_line_magic('pinfo2', '')
 from tensorflow.keras import backend as K
 from skimage.io import imread
 from skimage.transform import resize
-import cv2
+#import cv2
 
 Sample = '/Lab1/Lab2/Bone/train/AFF/14.jpg'
 Img = imread(Sample)
@@ -1289,4 +1799,10 @@ plt.figure()
 plt.imshow(img)
 plt.figure()
 plt.imshow(superimposed_img)
+
+
+# In[ ]:
+
+
+
 
