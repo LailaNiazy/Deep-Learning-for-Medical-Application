@@ -1682,7 +1682,7 @@ VGG_transferLearning(label1, label2,train_data_dir,validation_data_dir,img_width
 
 # ### Data Visualization
 
-# In[ ]:
+# In[12]:
 
 
 # Task 10 network
@@ -1755,11 +1755,13 @@ History = model.fit_generator(train_generator,  epochs=80, validation_data=val_g
 plotter(History)
 
 
-# In[ ]:
+# In[17]:
 
 
 # Task 10
 from tensorflow.keras import backend as K
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 from skimage.io import imread
 from skimage.transform import resize
 #import cv2
