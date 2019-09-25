@@ -89,7 +89,7 @@ def main(argv):
         History = model.fit(train_img, train_mask, epochs = epochs, batch_size = batch_size, verbose = 1,
                             validation_data = (test_img,test_mask))
                         
-    plotter(History)
+    plotter(History, task)
     
 if __name__ == "__main__": 
     #input in the console is the number of the task
