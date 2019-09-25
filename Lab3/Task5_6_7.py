@@ -7,7 +7,7 @@ Created on Wed Sep 25 16:58:29 2019
 
 from tensorflow.keras.optimizers import Adam
 from Dice import dice_coef, dice_coef_loss
-import u_net
+from u_net import u_net
 from Data_Loader import get_train_test_data
 from Data_Augmentation import DataAugmentation
 from tensorflow.keras.metrics import Recall, Precision

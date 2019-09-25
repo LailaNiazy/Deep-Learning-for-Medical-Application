@@ -8,7 +8,7 @@ Created on Tue Sep 24 22:38:24 2019
 from tensorflow.keras.optimizers import Adam
 import plotter
 from Dice import dice_coef, dice_coef_loss
-import u_net
+from u_net import u_net
 from Data_Loader import get_train_test_data
 from Data_Augmentation import DataAugmentation
 import sys
