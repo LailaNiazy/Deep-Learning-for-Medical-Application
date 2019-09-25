@@ -6,7 +6,7 @@ Created on Tue Sep 24 22:38:24 2019
 """
 
 from tensorflow.keras.optimizers import Adam
-import plotter
+from plotter import plotter
 from Dice import dice_coef, dice_coef_loss
 from u_net import u_net
 from Data_Loader import get_train_test_data
@@ -33,7 +33,7 @@ def main(argv):
     
     
     if task == '4':
-        
+        from
         base  = 32
         batch_normalization = False
         rotation_range = 10

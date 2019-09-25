@@ -13,7 +13,7 @@ from Data_Augmentation import DataAugmentation
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.utils import to_categorical
 import sys
-import plotter
+from plotter import plotter
 
 def main(argv):
     task = argv[0]
