@@ -9,7 +9,7 @@ Created on Tue Sep 24 22:37:45 2019
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotter(History, recall = False, precision = False, task):
+def plotter(History, task, recall = False, precision = False):
     #Training vs Validation Learning loss 
     fig = plt.figure(figsize=(4, 4))
     plt.title("Learning curve")
