@@ -53,7 +53,7 @@ def main(argv):
         History = model.fit(train_img, train_mask, epochs = epochs, batch_size = batch_size, verbose = 1,
                             validation_data = (test_img,test_mask))
         
-        plotter(History)
+        plotter(History, task)
     
     elif task == '5b':
         
@@ -74,7 +74,7 @@ def main(argv):
         History = model.fit_generator(train_datagen.flow(train_img, train_mask,batch_size = batch_size), validation_data = val_datagen.flow(test_img, test_mask), epochs = epochs, verbose = 1)        
         
         #Plot results
-        plotter(History, recall = True, precision = True)
+        plotter(History, task, recall = True, precision = True)
         
     elif task == '6':
         
@@ -100,7 +100,7 @@ def main(argv):
         History = model.fit_generator(train_datagen.flow(train_img, train_mask,batch_size = batch_size), validation_data = val_datagen.flow(test_img, test_mask), epochs = epochs, verbose = 1)          
         
         #Plot results
-        plotter(History, recall = True, precision = True)
+        plotter(History, task, recall = True, precision = True)
     
     elif task == '7':
     
@@ -123,7 +123,7 @@ def main(argv):
         History = model.fit_generator(train_datagen.flow(train_img, train_mask,batch_size = batch_size), validation_data = val_datagen.flow(test_img, test_mask), epochs = epochs, verbose = 1)          
         
         #Plot results
-        plotter(History, recall = True, precision = True)
+        plotter(History, task, recall = True, precision = True)
     else: 
         print('Wrong task number')
         
