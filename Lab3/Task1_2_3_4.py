@@ -33,7 +33,6 @@ def main(argv):
     
     
     if task == '4':
-        from
         base  = 32
         batch_normalization = False
         rotation_range = 10
