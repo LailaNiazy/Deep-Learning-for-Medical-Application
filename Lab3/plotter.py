@@ -9,9 +9,9 @@ Created on Tue Sep 24 22:37:45 2019
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotter(History, recall = False, precision = False):
+def plotter(History, recall = False, precision = False, task):
     #Training vs Validation Learning loss 
-    plt.figure(figsize=(4, 4))
+    fig = plt.figure(figsize=(4, 4))
     plt.title("Learning curve")
     plt.plot(History.history["loss"], label="loss")
     plt.plot(History.history["val_loss"], label="val_loss")
@@ -21,9 +21,10 @@ def plotter(History, recall = False, precision = False):
     plt.xlabel("Epochs")
     plt.ylabel("Loss Value")
     plt.legend(); 
+    fig.savefig('Learning_curve_{}.png'.format(task))
     
     #Train and test accuracy plot
-    plt.figure(figsize=(4,4))
+    fig = plt.figure(figsize=(4,4))
     plt.title("Dice Score Curve")
     plt.plot(History.history["dice_coef"], label="dice_coef")
     plt.plot(History.history["val_dice_coef"], label="val_dice_coef")
@@ -34,3 +35,4 @@ def plotter(History, recall = False, precision = False):
     plt.xlabel('Epochs')
     plt.ylabel('Dice Coef')
     plt.legend(); 
+    fig.savefig('Dice_Score_Curve_{}.png'.format(task))
