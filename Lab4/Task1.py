@@ -74,8 +74,8 @@ def task_1():
 
         fig_loss, fig_dice = plotter(History)
 
-        fig_loss.savefig('Learning_curve_{}_fold{}.png'.format(1,i))
-        fig_dice.savefig('Dice_Score_Curve_{}.png'.format(1,i))
+        fig_loss.savefig('/Task_1/Learning_curve_{}_fold{}.png'.format(1,i))
+        fig_dice.savefig('/Task_1/Dice_Score_Curve_{}_fold{}.png'.format(1,i))
     print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
 
     return History
