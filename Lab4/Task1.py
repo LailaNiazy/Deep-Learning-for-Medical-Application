@@ -14,7 +14,7 @@ from plotter import plotter
 from u_net import u_net
 from sklearn.model_selection import train_test_split
 
-def Task_1():
+def task_1():
 
 
     #Model parameters
