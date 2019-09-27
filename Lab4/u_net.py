@@ -2,7 +2,6 @@
 """
 Created on Wed Sep 25 21:13:21 2019
 
-@author: looly
 """
 
 ##model

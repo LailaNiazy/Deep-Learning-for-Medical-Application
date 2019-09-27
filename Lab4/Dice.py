@@ -2,7 +2,6 @@
 """
 Created on Tue Sep 24 22:34:54 2019
 
-@author: looly
 """
 
 ##similarity metrics

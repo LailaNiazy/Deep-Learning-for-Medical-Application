@@ -2,7 +2,6 @@
 """
 Created on Tue Sep 24 22:32:27 2019
 
-@author: looly
 """
 
 import tensorflow as tf
