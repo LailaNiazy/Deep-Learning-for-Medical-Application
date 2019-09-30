@@ -19,7 +19,8 @@ from skimage.io import imread
 from skimage.transform import resize
 import cv2
 import scipy.misc
-
+from scipy.ndimage.morphology import binary_dilation,binary_erosion
+import matplotlib.pyplot as plt
 
 def path_loader(fold1, fold2, data_path):
     #Creating data path
@@ -57,7 +58,6 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
     train_img = []
     train_mask = []
 
-    len(train_x)
     for i in range(len(train_x)):
         image_name = train_x[i]
         img = imread(image_name, as_grey=True)
@@ -77,26 +77,31 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
 
 
 def create_weight_map(mask, radius, i):
+    #binarize masks
+    mask[mask>0]=1
+    mask[mask == 0] = 0
+
     
     # morphology kernel
     kernel = np.ones((radius*2+1,radius*2+1))
     
+    
     # dilate the mask -radius=2
-    dilate = cv2.dilate(mask, kernel)
+    dilate = binary_dilation(mask, kernel)
     
     # erode the mask
-    erosion = cv2.erode(mask, kernel)
+    erosion = binary_erosion(mask, kernel)
     
     # substract the eroded image from the dilated image
-    substraction = dilate-erosion
+    substraction = dilate^erosion
     
     # save the substraction
-    scipy.misc.imsave('Weight_Maps/weight_map_{}.jpg'.format(i),substraction)
+    #scipy.misc.imsave('Weight_Maps/weight_map_{}.jpg'.format(i),substraction)
 
     return substraction
     
 # Instantiating images and labels for the model.
-def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
+def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w,weight_maps):
     
     train_img, train_mask = data_loader(fold1, fold2, data_path, p,img_h, img_w)
 
@@ -106,14 +111,15 @@ def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
     
     for i in range(len(train_img)):
         Train_Img[i] = train_img[i][0]
-        Train_Label[i] = train_mask[i][0]
-        Weight_Map[i] = create_weight_map(Train_Label[i], 2, i)
+        mask_semi = train_mask[i][0]
+        mask_semi[mask_semi>0]=1
+        Train_Label[i] = mask_semi
+        if weight_maps:
+            Weight_Map[i] = create_weight_map(Train_Label[i], 2, i)
     
     Train_Img = np.expand_dims(Train_Img, axis = 3)  
     Train_Label = np.expand_dims(Train_Label, axis = 3) 
 
-    
-    print(Train_Img.shape)
    
     return Train_Img, Train_Label, Weight_Map
 
