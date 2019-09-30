@@ -6,9 +6,8 @@ Created on Mon Sep 30 11:32:19 2019
 """
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision
-from Data_Augmentation import DataAugmentation
+from Data_Augmentation import generator_with_weights
 from Data_Loader import get_train_test_data
-from sklearn.model_selection import train_test_split
 from Dice import weighted_dice_loss, weighted_dice_coef
 from plotter import plotter
 from u_net import u_net
@@ -21,7 +20,7 @@ def task3():
      #Model parameters
     base = 16
     image_size = 240
-    img_ch = 1
+    img_ch = 2
     batch_size =8
     LR = 0.00001
     SDRate = 0.5
@@ -37,55 +36,68 @@ def task3():
     fold1 = 'Image'
     fold2 = 'Mask'
 
-    #Data augmentation parameters
-    data_augmentation = True
-    rotation_range = 10
-    width_shift = 0.1
-    height_shift_range = 0.1,
-    rescale = 1./255
-    horizontal_flip = True
 
-    #K-fold cross validation
+    #Weighted Dice
     weight_strength = 1
     weight_maps_bool = True
-    T = 2 #number of cycles
     
-    x_train,x_val,y_train,y_val = train_test_split(images,masks,test_size = p, shuffle = False)
-    images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size)
+    
+    
+    #Load the data
+    images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size,weight_maps_bool)
     #building model
     model = u_net(base,image_size, image_size, img_ch, batch_normalization, SDRate, spatial_dropout,final_neurons, final_afun)
-    
+    #Compile the model
+    model.compile(optimizer = Adam(lr=LR), loss = weighted_dice_loss(weight_maps, weight_strength), metrics =[weighted_dice_coef, Recall(), Precision()] )
+          
+    T = 2 #number of cycles
+    counter = 1
     for s in range(T):
-        #train_test split
-        
-        weight_train = weight_map[0:x_train.shape[0]-1][:,:]
-        weight_val = weight_map[x_train.shape[0]:][:,:]
-        #Compile the model
-        model.compile(optimizer = Adam(lr=LR), loss = weighted_loss(weight_maps, weight_strength), metrics =[dice_coef, Recall(), Precision()] )
-        if data_augmentation:
-            #Fit the data into the model
-            train_generator = generator_with_weights(x_train, y_train, weight_train, Batch_size)
-            History = model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, 
-                                                verbose=1, max_queue_size=1, validation_steps=len(x_val),
-                                                validation_data=([x_val, weight_val], y_val), shuffle=True, class_weight='auto')
-        else:
-            History = model.fit([x_train, weight_train], y_train, epochs = epochs, batch_size = batch_size, verbose = 1,
-                            validation_data = ([x_val, weight_val], y_val))
+        cvscores = []
+        #k-fold crossvalidation loop
+        cv = KFold(n_splits=3, random_state=42, shuffle=False)
+        for train_index, test_index in cv.split(images):
             
-        
-        val_predictions=model.predict(x_val,batch_size=int(batch_size/2))
-        train_predictions=model.predict(x_train,batch_size=int(batch_size/2))
-        
-        model_predictions[(s*1):((s+1)*1)] = val_predictions
-        
-        #Ask, we need to change the channels to 2
-    
-        x_train,x_val,y_train,y_val = train_test_split(images,masks,test_size = p, shuffle = False)
-        
-        x_train=np.concatenate((x_train,train_predictions),axis=-1)
-        
-        x_val=np.concatenate((x_val,val_predictions),axis=-1)
+            print('cross validation fold{}'.format(counter))
+            #x_train,x_val,y_train,y_val = train_test_split(images,masks,test_size = p)
+            x_train, x_val, y_train, y_val = images[train_index], images[test_index], masks[train_index], masks[test_index]
+            weight_train = weight_maps[train_index]
+            weight_val = weight_maps[test_index]
+            
+           
+            
+            if s == 0:
+                train_predictions = np.ones(240,240,1)*0.5
+                val_predictions = np.ones(240,240,1)*0.5
+                x_train=np.concatenate((x_train,train_predictions),axis=-1)
+                x_val=np.concatenate((x_val,val_predictions),axis=-1)
+            else:
+                y_pred=np.load('Lab4'+'posterior_unet/step'+str(step -1)+'.npy')
+                x_train=np.concatenate((x_train,train_predictions),axis=-1)
+                x_val=np.concatenate((x_val,val_predictions),axis=-1)    
+                #Fit the data into the model
+            train_generator = generator_with_weights(x_train, y_train, weight_train, batch_size)
+            History = model.fit_generator(train_generator, epochs=epochs, 
+                                verbose=1, max_queue_size=1, validation_steps=len(x_val),
+                                validation_data=([x_val, weight_val], y_val), shuffle=True, class_weight='auto')
+   
+            
+            val_predictions=model.predict(x_val,batch_size=int(batch_size/2))
+            train_predictions=model.predict(x_train,batch_size=int(batch_size/2))
+            
+            model_predictions[(s*1):((s+1)*1)] = val_predictions            
+            np.save('Lab4'+'posterior_unet/step'+str(counter)+'.npy', model_predictions)
+            #Ask, we need to change the channels to 2
+            
 
-        plotter(History)
+            counter=+1
+            print("%s: %.2f%%" % (model.metrics_names[1], History.history["val_dice_coef"]*100))
+            cvscores.append(History.history["val_dice_coef"][len(History.history["val_dice_coef"])-1] * 100)
+            fig_loss, fig_dice = plotter(History)
+    
+            fig_loss.savefig('/Task_1/Learning_curve_{}_fold{}.png'.format(2,counter))
+            fig_dice.savefig('/Task_1/Dice_Score_Curve_{}_fold{}.png'.format(2,counter))
+    print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
+
     
     return History
