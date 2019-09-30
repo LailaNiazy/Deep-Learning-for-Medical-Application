@@ -6,7 +6,6 @@ Created on Wed Sep 25 21:21:50 2019
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision
-from Data_Augmentation import DataAugmentation
 from Data_Loader import get_train_test_data
 from Dice import weighted_dice_loss, weighted_dice_coef
 from plotter import plotter
@@ -40,21 +39,13 @@ def task_2():
 
     #Data augmentation parameters
     data_augmentation = True
-    rotation_range = 10
-    width_shift = 0.1
-    height_shift_range = 0.1,
-    rescale = 1./255
-    horizontal_flip = True
 
     #K-fold cross validation
     weight_strength = 1
     weight_maps_bool = True
     #Load the data
     images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size,weight_maps_bool)
-
-    #Data augmentation
-    train_datagen, val_datagen = DataAugmentation(rotation_range,width_shift,height_shift_range,rescale,horizontal_flip)
-
+    
 
     #Build the model
     model = u_net(base,image_size, image_size, img_ch, batch_normalization, SDRate, spatial_dropout,final_neurons, final_afun)
