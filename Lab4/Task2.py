@@ -4,9 +4,18 @@ Created on Wed Sep 25 21:21:50 2019
 
 """
 
-from tensorflow.keras.optimizers import SGD, Adam
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision
-from sklearn.model_selection import StratifiedKFold
+from Data_Augmentation import DataAugmentation
+from Data_Loader import get_train_test_data
+from Dice import weighted_dice_loss, weighted_dice_coef
+from plotter import plotter
+from u_net import u_net
+from Data_Augmentation import generator_with_weights
+import numpy as np
+from sklearn.model_selection import KFold
+
+
 
 def task_2():
 
@@ -19,7 +28,6 @@ def task_2():
     SDRate = 0.5
     batch_normalization = True
     spatial_dropout = True
-    metric = 'dice'
     epochs = 150
     final_neurons= 1 #binary classification
     final_afun = "sigmoid" #activation function
@@ -39,7 +47,6 @@ def task_2():
     horizontal_flip = True
 
     #K-fold cross validation
-    n_folds = 3
     weight_strength = 1
     weight_maps_bool = True
     #Load the data
@@ -52,21 +59,26 @@ def task_2():
     #Build the model
     model = u_net(base,image_size, image_size, img_ch, batch_normalization, SDRate, spatial_dropout,final_neurons, final_afun)
     #Compile the model
-    model.compile(optimizer = Adam(lr=LR), loss = weighted_loss(weight_maps, weight_strength), metrics =[dice_coef, Recall(), Precision()] )
+    model.compile(optimizer = Adam(lr=LR), loss = weighted_dice_loss(weight_maps, weight_strength), metrics =[weighted_dice_coef, Recall(), Precision()] )
 
     #k-fold crossvalidation loop
-
+    cvscores = []
+    #k-fold crossvalidation loop
+    cv = KFold(n_splits=3, random_state=42, shuffle=False)
+    
+    counter = 1
     for train_index, test_index in cv.split(images):
         #train_test split
         print('cross validation fold{}'.format(counter))
         #x_train,x_val,y_train,y_val = train_test_split(images,masks,test_size = p)
         x_train, x_val, y_train, y_val = images[train_index], images[test_index], masks[train_index], masks[test_index]
-        weight_train = weight_map[train_index]
-        weight_val = weight_map[test_index]
+        weight_train = weight_maps[train_index]
+        weight_val = weight_maps[test_index]
         if data_augmentation:
             #Fit the data into the model
             train_generator = generator_with_weights(x_train, y_train, weight_train, batch_size)
-            History = model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, 
+           # val_generator = generator_with_weights(x_val, y_val, weight_val, batch_size)
+            History = model.fit_generator(train_generator, epochs=epochs, 
                                                 verbose=1, max_queue_size=1, validation_steps=len(x_val),
                                                 validation_data=([x_val, weight_val], y_val), shuffle=True, class_weight='auto')
         else:
@@ -80,5 +92,5 @@ def task_2():
 
         fig_loss.savefig('/Task_1/Learning_curve_{}_fold{}.png'.format(2,counter))
         fig_dice.savefig('/Task_1/Dice_Score_Curve_{}_fold{}.png'.format(2,counter))
-    print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
+    print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
     return History

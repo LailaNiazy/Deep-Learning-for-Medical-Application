@@ -12,9 +12,8 @@ from Data_Loader import get_train_test_data
 from Dice import dice_coef_loss, dice_coef
 from plotter import plotter
 from u_net import u_net
-from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
-import matplotlib.pyplot as plt
+
 
 def task_1():
 
@@ -30,7 +29,7 @@ def task_1():
     spatial_dropout = True
     epochs = 10
     final_neurons= 1 #binary classification
-    final_afun = "sigmoid" #activation function
+    final_afun = "softmax" #activation function
 
     #Data loader parameters
     p = 0.2
@@ -46,8 +45,7 @@ def task_1():
     rescale = 1./255
     horizontal_flip = True
 
-    #K-fold cross validation
-    n_folds = 3
+
     #Load the data
     print('getting data')
     images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size,weight_maps_flag)
@@ -88,7 +86,7 @@ def task_1():
         fig_loss.savefig('/Task_1/Learning_curve_{}_fold{}.png'.format(1,counter))
         fig_dice.savefig('/Task_1/Dice_Score_Curve_{}_fold{}.png'.format(1,counter))
         
-        counter=counter+1
+        counter=+1
     print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
 
     return History
