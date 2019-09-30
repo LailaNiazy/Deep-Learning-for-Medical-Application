@@ -8,7 +8,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision
 from Data_Augmentation import DataAugmentation
 from Data_Loader import get_train_test_data
-from Dice import weighted_dice_loss, weighted_dice_coef
+from Dice import weighted_dice_coef, weighted_dice_loss
 from plotter import plotter
 from u_net import u_net
 from Data_Augmentation import generator_with_weights

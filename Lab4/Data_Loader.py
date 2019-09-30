@@ -53,21 +53,21 @@ def get_train_data_shuffled(images, masks, p):
 def data_loader(fold1, fold2, data_path, p,img_h, img_w):
     
     images, masks = path_loader(fold1, fold2, data_path)
-    train_x, train_y = get_train_data_shuffled(images, masks, p)
+    #train_x, train_y = get_train_data_shuffled(images, masks, p)
     
     train_img = []
     train_mask = []
 
-    for i in range(len(train_x)):
-        image_name = train_x[i]
+    for i in range(len(images)):
+        image_name = images[i]
         img = imread(image_name, as_grey=True)
         img = resize(img, (img_h, img_w), anti_aliasing = True).astype('float32')
         train_img.append([np.array(img)]) 
 
         if i % 50 == 0:
-             print('Reading: {0}/{1}  of train images'.format(i, len(train_x)))
-    for j in range(len(train_y)):
-        mask_name = train_y[j]
+             print('Reading: {0}/{1}  of train images'.format(i, len(images)))
+    for j in range(len(masks)):
+        mask_name = masks[j]
         mask = imread(mask_name, as_grey=True)
         mask = resize(mask, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
         train_mask.append([np.array(mask)])
@@ -78,8 +78,8 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
 
 def create_weight_map(mask, radius, i):
     #binarize masks
-    mask[mask>0]=1
-    mask[mask == 0] = 0
+    #mask[mask>0]=1
+    #mask[mask == 0] = 0
 
     
     # morphology kernel
