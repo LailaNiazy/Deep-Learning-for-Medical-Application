@@ -7,8 +7,8 @@ Created on Tue Sep 24 22:32:27 2019
 import tensorflow as tf
 
 
-#tf.config.gpu.set_per_process_memory_fraction(0.3)
-#tf.config.gpu.set_per_process_memory_growth(True)
+tf.config.gpu.set_per_process_memory_fraction(0.3)
+tf.config.gpu.set_per_process_memory_growth(True)
 
 ##image loader
 
@@ -17,10 +17,10 @@ import numpy as np
 from sklearn.utils import shuffle
 from skimage.io import imread
 from skimage.transform import resize
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
-import scipy.misc
-from scipy.ndimage.morphology import binary_dilation,binary_erosion
-import matplotlib.pyplot as plt
+import SimpleITK as sitk
 
 def path_loader(fold1, fold2, data_path):
     #Creating data path
@@ -43,7 +43,9 @@ def path_loader(fold1, fold2, data_path):
             
 
     return images, masks
+    
 
+# reading and resizing the training images with their corresponding labels
 def get_train_data_shuffled(images, masks, p):
     
 
@@ -52,7 +54,6 @@ def get_train_data_shuffled(images, masks, p):
     #train_x, test_x, train_y, test_y = train_test_split(images,masks,test_size = p)
 
     return images, masks
-
 
 def data_loader(fold1, fold2, data_path, p,img_h, img_w):
     
@@ -75,35 +76,48 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
         mask = resize(mask, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
         train_mask.append([np.array(mask)])
 
-        if i % 50 == 0:
+        if i % 500 == 0:
             print('Reading: {0}/{1}  of train images'.format(i, len(train_x)))
             print("Readin image {} and mask {}".format(image_name,mask_name))
     return train_img, train_mask
-
-
+"""
+    for j in range(len(train_y)):
+        mask_name = train_y[j]
+        mask = imread(mask_name, as_grey=True)
+        mask = resize(mask, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
+        train_mask.append([np.array(mask)])
+    """
+        
 
 def create_weight_map(mask, radius, i):
-    #binarize masks
-    #mask[mask>0]=1
-    #mask[mask == 0] = 0
-
+ 
+    mask = np.uint16(mask)
     # morphology kernel
     kernel = np.ones((radius*2+1,radius*2+1))
     
     # dilate the mask -radius=2
-    dilate = binary_dilation(mask, kernel)
+    dilate = cv2.dilate(mask, kernel)
     
     # erode the mask
-    erosion = binary_erosion(mask, kernel)
+    erosion = cv2.erode(mask, kernel)
     
     # substract the eroded image from the dilated image
-    substraction = dilate^erosion
+    substraction = dilate-erosion
     
     # save the substraction
-    #scipy.misc.imsave('Weight_Maps/weight_map_{}.jpg'.format(i),substraction)
+   # cv2.imwrite('weight_map_{}.jpg'.format(i),substraction)
+    
+    #cv2.imshow('image', substraction)
+#    mask_dilated = sitk.GrayscaleDilate(mask,radius)
+ #   mask_eroded = sitk.GrayscaleErode(mask,radius)
+  #  mask_boundary = sitk.Subtract(mask_dilated,mask_eroded)
+    
+    # save the substraction
+   # scipy.misc.imsave('weight_map_{}.jpg'.format(i),mask_boundary)
 
     return substraction
-    
+ 
+
 # Instantiating images and labels for the model.
 def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
     
@@ -127,5 +141,3 @@ def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
     print(Train_Img.shape)
    
     return Train_Img, Train_Label, Weight_Map
-
-
