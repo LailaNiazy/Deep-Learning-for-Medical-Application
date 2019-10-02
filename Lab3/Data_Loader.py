@@ -38,13 +38,15 @@ def path_loader(fold1, fold2, data_path):
     
 
 def get_train_data_shuffled(images, masks, p):
-    #shufling the data and spliting it to test and train set according to the percentage p
-
+    
+    #shuffling the data and splitting it to test and train set according to the percentage p
+    #the reason for zipping is to get the images and masks shuffle the same order
     c = list(zip(images, masks))
 
     shuffle(c)
 
     images, masks = zip(*c)
+    #splitting the training and test data
     
     train_x, test_x, train_y, test_y = train_test_split(images,masks,test_size = p)
 
@@ -69,6 +71,7 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
 
         if i % 50 == 0:
              print('Reading: {0}/{1}  of train images'.format(i, len(train_x)))
+                
     for j in range(len(train_y)):
         mask_name = train_y[j]
         mask = imread(mask_name, as_grey=True)
@@ -101,8 +104,8 @@ def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
     Train_Img = np.zeros((len(train_img), img_h, img_w), dtype = np.float32)
     Test_Img = np.zeros((len(test_img), img_h, img_w), dtype = np.float32)
 
-    Train_Label = np.zeros((len(train_mask),img_h, img_w), dtype = np.int32)
-    Test_Label = np.zeros((len(test_mask),img_h, img_w), dtype = np.int32)
+    Train_Label = np.zeros((len(train_mask),img_h, img_w), dtype = np.float32)
+    Test_Label = np.zeros((len(test_mask),img_h, img_w), dtype = np.float32)
 
     for i in range(len(train_img)):
         Train_Img[i] = train_img[i][0]

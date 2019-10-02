@@ -279,5 +279,5 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     
     model = Model(inputs,a18)
     
-    model.summary()
+ #   model.summary()
     return model

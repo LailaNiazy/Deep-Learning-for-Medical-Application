@@ -27,10 +27,6 @@ def plotter(History, recall = False, precision = False):
     plt.title("Dice Score Curve")
     plt.plot(History.history["dice_coef"], label="dice_coef")
     plt.plot(History.history["val_dice_coef"], label="val_dice_coef")
-    if recall:
-        plt.plot(History.history["val_recall"], label="val_recall")
-    if precision:
-        plt.plot(History.history["val_precision"], label="val_precision")
     plt.xlabel('Epochs')
     plt.ylabel('Dice Coef')
     plt.legend(); 

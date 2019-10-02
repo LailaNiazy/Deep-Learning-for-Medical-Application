@@ -35,4 +35,4 @@ def plotter(History, task, recall = False, precision = False):
     plt.xlabel('Epochs')
     plt.ylabel('Dice Coef')
     plt.legend(); 
-    fig.savefig('Dice_Score_Curve_{}.png'.format(task))
+    fig.savefig('Plots/Dice_Score_Curve_{}.png'.format(task))
