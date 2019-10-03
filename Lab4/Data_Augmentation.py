@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep 24 22:34:03 2019
-
-@author: looly
 """
 
 ##Data Augmentation

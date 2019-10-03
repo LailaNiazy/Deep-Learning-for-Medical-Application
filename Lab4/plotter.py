@@ -2,16 +2,15 @@
 """
 Created on Tue Sep 24 22:37:45 2019
 
-@author: looly
 """
 
 ##plotter
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotter(History, recall = False, precision = False, task):
+def plotter(History, recall = False, precision = False):
     #Training vs Validation Learning loss 
-    fig = plt.figure(figsize=(4, 4))
+    fig_loss = plt.figure(figsize=(4, 4))
     plt.title("Learning curve")
     plt.plot(History.history["loss"], label="loss")
     plt.plot(History.history["val_loss"], label="val_loss")
@@ -21,18 +20,16 @@ def plotter(History, recall = False, precision = False, task):
     plt.xlabel("Epochs")
     plt.ylabel("Loss Value")
     plt.legend(); 
-    fig.savefig('Learning_curve_{}.png'.format(task))
+
     
     #Train and test accuracy plot
-    fig = plt.figure(figsize=(4,4))
+    fig_dice = plt.figure(figsize=(4,4))
     plt.title("Dice Score Curve")
     plt.plot(History.history["dice_coef"], label="dice_coef")
     plt.plot(History.history["val_dice_coef"], label="val_dice_coef")
-    if recall:
-        plt.plot(History.history["val_recall"], label="val_recall")
-    if precision:
-        plt.plot(History.history["val_precision"], label="val_precision")
     plt.xlabel('Epochs')
     plt.ylabel('Dice Coef')
     plt.legend(); 
-    fig.savefig('Dice_Score_Curve_{}.png'.format(task))
+
+
+    return fig_loss, fig_dice

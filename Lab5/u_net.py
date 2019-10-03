@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep 25 21:13:21 2019
+Created on Tue Sep 24 22:36:08 2019
 
+@author: looly
 """
 
 ##model
@@ -10,12 +11,11 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Activation
 from tensorflow.keras.layers import Conv2D, Input, concatenate, Conv2DTranspose
 from tensorflow.keras.layers import BatchNormalization, SpatialDropout2D
-from tensorflow.keras.layers import MaxPooling2D
-
-def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatial_dropout, final_neurons, final_afun):
-    inputs = Input((img_height, img_width, img_ch))
-    inputs2 = Input((img_height, img_width, img_ch))
+from tensorflow.keras.layers import MaxPooling2D, Reshape, ConvLSTM2D
+import numpy as np
+def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatial_dropout, number_of_labels):
     
+    inputs = Input((img_height, img_width, img_ch))
     ## Contraction
     # Conv Block 1
     
@@ -151,9 +151,18 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
         
     ##Expansion
     #Conv Block 1
-    c10 = Conv2DTranspose(filters=Base*8,
-                     kernel_size=(2,2), strides=(2,2), padding='same')(a9)
-    c10 = concatenate([a8,c10])
+    # up-sampling:
+    c10 = Conv2DTranspose(filters=Base*8,kernel_size= (3, 3), strides=(2, 2), padding='same')(a9)
+    # reshaping:
+  #  x1 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 8))(a8)
+  #  x2 = Reshape(target_shape=(1, np.int32(img_height/ 8), np.int32(img_width / 8), Base * 8))(c10)
+    print('here')
+    x1 = Reshape(target_shape=(1, np.int32(img_height/8), np.int32(img_width/8), Base * 8))(a8)
+    x2 = Reshape(target_shape=(1, np.int32(img_height/8), np.int32(img_width/8), Base * 8))(c10)
+    # concatenation:
+    c10 = concatenate([x1, x2], axis=1)
+    # LSTM:
+    c10 = ConvLSTM2D(filters=Base*4, kernel_size=(3, 3), padding='same', return_sequences=False, go_backwards=True)(c10)
     
     c11 = Conv2D(filters=Base*8,
                      kernel_size=(3,3), strides=(1,1), padding='same')(c10)
@@ -183,12 +192,20 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
         
     
     #Conv Block 2
-    c13 = Conv2DTranspose(filters=Base*4,
-                     kernel_size=(2,2), strides=(2,2), padding='same')(a11)
-    c13 = concatenate([a6,c13])
+    # up-sampling:
+    c13 = Conv2DTranspose(filters=Base*4, kernel_size=(2,2), strides=(2,2), padding='same')(a11)
+    # reshaping:
+ #   x3 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8),Base * 4))(a6)
+ #   x4 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 4))(c13)
+    print('here')
+    x3 = Reshape(target_shape=(1, np.int32(img_height/4), np.int32(img_width/4),Base * 4))(a6)
+    x4 = Reshape(target_shape=(1, np.int32(img_height/4), np.int32(img_width/4), Base * 4))(c13)
+    # concatenation:
+    c13 = concatenate([x3, x4], axis=1)
+    # LSTM:
+    c13 = ConvLSTM2D(filters=Base*4, kernel_size=(3, 3), padding='same', return_sequences=False, go_backwards=True)(c13)
     
-    c14 = Conv2D(filters=Base*4,
-                     kernel_size=(3,3), strides=(1,1), padding='same')(c13)
+    c14 = Conv2D(filters=Base*4,kernel_size=(3,3), strides=(1,1), padding='same')(c13)
     
      #Add batch Normalization
     if batchNormalization:
@@ -215,9 +232,19 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
         
     
     #Conv Block 3
+    # up-sampling:
     c16 = Conv2DTranspose(filters=Base*2,
                      kernel_size=(2,2), strides=(2,2), padding='same')(a13)
-    c16 = concatenate([a4,c16])
+    # reshaping:
+   # x5 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 2))(a4)
+   # x6 = Reshape(target_shape=(1, np.int32(img_height/ 8), np.int32(img_width / 8), Base * 2))(c16)
+    print('here')
+    x5 = Reshape(target_shape=(1, np.int32(img_height/2), np.int32(img_width/2), Base * 2))(a4)
+    x6 = Reshape(target_shape=(1, np.int32(img_height/2), np.int32(img_width/2), Base * 2))(c16)
+    # concatenation:
+    c16 = concatenate([x5, x6], axis=1)
+    # LSTM:
+    c16 = ConvLSTM2D(filters=Base*4, kernel_size= (3, 3), padding='same', return_sequences=False, go_backwards=True)(c16)
     
     c17 = Conv2D(filters=Base*2, 
                      kernel_size=(3,3), strides=(1,1), padding='same')(c16)
@@ -247,9 +274,19 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
         
     
     #Conv Block 4
+    # up-sampling:
     c19 = Conv2DTranspose(filters=Base,
                      kernel_size=(2,2), strides=(2,2), padding='same')(a15)
-    c19 = concatenate([a2,c19])
+    # reshaping:
+   # x7 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base))(a2)
+   # x8 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width/ 8), Base))(c19)
+    print('here')
+    x7 = Reshape(target_shape=(1, np.int32(img_height), np.int32(img_width), Base))(a2)
+    x8 = Reshape(target_shape=(1, np.int32(img_height), np.int32(img_width), Base))(c19)
+    # concatenation:
+    c19 = concatenate([x7, x8], axis=1)
+    # LSTM:
+    c19 = ConvLSTM2D(filters=Base*4, kernel_size=(3, 3), padding='same', return_sequences=False, go_backwards=True)(c19)
     
     c20 = Conv2D(filters=Base,
                      kernel_size=(3,3), strides=(1,1), padding='same')(c19)
@@ -274,10 +311,10 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     a17 = Activation('relu')(c21)
     
     #final layer
-    c22 = Conv2D(final_neurons, kernel_size=(3,3), strides=(1,1), padding='same')(a17)
-    a18 = Activation(final_afun)(c22)
+    c22 = Conv2D(number_of_labels, kernel_size=(3,3), strides=(1,1), padding='same')(a17)
+    a18 = Activation('sigmoid')(c22)
     
     model = Model(inputs,a18)
     
- #   model.summary()
+    model.summary()
     return model
