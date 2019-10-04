@@ -1,5 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Sep 24 22:36:08 2019
+
+@author: looly
+"""
+
 from Task1 import task_1
-from Task2 import task_2
+#from Task2 import task_2
 from Task3 import task_3
 import sys
 
@@ -9,9 +16,9 @@ def main(argv):
         print('doing task 1.')
         history_1 = task_1()
         
-    elif argv == '2':
-        print('doing task 2.')
-        history_2 = task_2()
+#    elif argv == '2':
+ #       print('doing task 2.')
+  #      history_2 = task_2()
         
     elif argv == '3':
         print('doing task 3.')

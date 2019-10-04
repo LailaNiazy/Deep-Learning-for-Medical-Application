@@ -15,7 +15,7 @@ import sys
 
 def main(argv):
     
-    task = argv[0]
+    task = argv
     #initialize for all 4 tasks
     image_size = 256 #both width and height of image are the same
     img_ch = 1
@@ -93,5 +93,7 @@ def main(argv):
     
 if __name__ == "__main__": 
     #input in the console is the number of the task
-    main(sys.argv[1:])  
+    task = input("Enter the number of task to perform: ")
+    main(task)
+
     

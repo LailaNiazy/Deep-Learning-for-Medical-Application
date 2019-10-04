@@ -13,10 +13,11 @@ from Data_Augmentation import DataAugmentation
 from tensorflow.keras.metrics import Recall, Precision
 from tensorflow.keras.utils import to_categorical
 import sys
+import numpy as np
 from plotter import plotter
 
 def main(argv):
-    task = argv[0]
+    task = argv
     #Model parameters
     base = 16
     image_size = 256
@@ -126,8 +127,9 @@ def main(argv):
         plotter(History, task, recall = True, precision = True)
     else: 
         print('Wrong task number')
-        
+
 if __name__ == "__main__": 
     #input in the console is the number of the task
-    main(sys.argv[1:])  
-    
+    task = input("Enter the number of task to perform: ")
+    main(task)
+
