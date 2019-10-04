@@ -91,7 +91,7 @@ def create_weight_map(mask, radius, i):
     substraction = dilate-erosion
     
     # save the substraction
-    scipy.misc.imsave('Weight_Maps/weight_map_{}.jpg'.format(i),substraction)
+    #scipy.misc.imsave('Weight_Maps/weight_map_{}.jpg'.format(i),substraction)
 
     return substraction
     
