@@ -9,7 +9,7 @@ from tensorflow.keras.optimizers import Adam
 from plotter import plotter
 from u_net import u_net
 from Dice import dice_coef, dice_coef_loss
-from Data_Loader import get_train_test_data
+from Data_Loader_Task3 import get_train_test_data
 from Data_Augmentation import DataAugmentation
 import sys
 
@@ -22,7 +22,7 @@ def task_3():
     SDRate = 0.5
     spatial_dropout = True
     epochs = 150
-    base  = 16
+    base  = 32
     batch_normalization = True
     p = 0.2 #percentage of training and test data
     path = '/Lab1/Lab3/X_ray/'
@@ -47,6 +47,7 @@ def task_3():
     History = model.fit(train_img, train_mask, epochs = epochs, batch_size = batch_size, verbose = 1,
                             validation_data = (test_img,test_mask))
  #   History = model.fit_generator(train_datagen.flow(train_img, train_mask,batch_size = batch_size), validation_data = val_datagen.flow(test_img, test_mask), epochs = epochs, verbose = 1)       
-    fig, fig2 = plotter(History, 3)
+    plotter(History, '3')
+    
     
  
