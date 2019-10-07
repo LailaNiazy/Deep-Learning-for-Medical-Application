@@ -28,9 +28,9 @@ def task_1():
     SDRate = 0.5
     batch_normalization = True
     spatial_dropout = True
-    epochs = 150
+    epochs = 100
     final_neurons= 1 #binary classification
-    final_afun = "softmax" #activation function
+    final_afun = "sigmoid" #activation function
 
     #Data loader parameters
     p = 0.2
@@ -64,7 +64,7 @@ def task_1():
 
      #k-fold crossvalidation loop
     #cvscores = []
-    cv = KFold(n_splits=3, random_state=42, shuffle=False)
+    cv = KFold(n_splits=3, shuffle=False)
     counter = 1
     
     for train_index, test_index in cv.split(images):
@@ -74,9 +74,8 @@ def task_1():
         x_train, x_val, y_train, y_val = images[train_index], images[test_index], masks[train_index], masks[test_index]
         
         #Fit the data into the model
-       # History = model.fit(x_train, y_train, epochs = epochs, batch_size = batch_size, verbose = 1,
-          #                  validation_data = (x_val, y_val))
-        History = model.fit_generator(train_datagen.flow(x_train, y_train,batch_size = batch_size), validation_data = val_datagen.flow(x_val, y_val), epochs = epochs, verbose = 1)
+        History = model.fit(x_train, y_train, epochs = epochs, batch_size = batch_size, verbose = 1, validation_data = (x_val, y_val))
+        #History = model.fit_generator(train_datagen.flow(x_train, y_train,batch_size = batch_size), validation_data = val_datagen.flow(x_val, y_val), epochs = epochs, verbose = 1)
 
        # print("%s: %.2f%%" % (model.metrics_names[1], History.history["val_dice_coef"]))
         

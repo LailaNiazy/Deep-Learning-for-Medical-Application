@@ -7,8 +7,8 @@ Created on Tue Sep 24 22:32:27 2019
 import tensorflow as tf
 
 
-tf.config.gpu.set_per_process_memory_fraction(0.3)
-tf.config.gpu.set_per_process_memory_growth(True)
+#tf.config.gpu.set_per_process_memory_fraction(0.3)
+#tf.config.gpu.set_per_process_memory_growth(True)
 
 ##image loader
 
@@ -68,7 +68,7 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
     for i in range(len(train_x)):
         image_name = train_x[i]
         img = imread(image_name, as_grey=True)
-        img = resize(img, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
+        img = resize(img, (img_h, img_w), anti_aliasing = True).astype('float32')
         train_img.append([np.array(img)]) 
         
         mask_name = train_y[i]
