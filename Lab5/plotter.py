@@ -26,7 +26,7 @@ def plotter(History, task, predicted_stock_price = []):
         
         #Train and test accuracy plot
         fig2 = plt.figure(figsize=(4,4))
-        plt.title("Mean Absolute Erro Curve")
+        plt.title("Mean Absolute Error Curve")
         plt.plot(History.history["mean_absolute_error"], label="mean_absolute_error")
         plt.plot(History.history["val_mean_absolute_error"], label="val_mean_absolute_error")
         plt.xlabel('Epochs')
@@ -46,7 +46,7 @@ def plotter(History, task, predicted_stock_price = []):
     elif task == '3':
         #Train and test accuracy plot
         fig2 = plt.figure(figsize=(4,4))
-        plt.title("Mean Absolute Erro Curve")
+        plt.title("Dice_Coef_Curve")
         plt.plot(History.history["dice_coef"], label="dice_coef")
         plt.plot(History.history["val_dice_coef"], label="val_dice_coef")
         plt.xlabel('Epochs')

@@ -29,7 +29,7 @@ def task_2():
     spatial_dropout = True
     epochs = 150
     final_neurons= 1 #binary classification
-    final_afun = "softmax" #activation function
+    final_afun = "sigmoid" #activation function
 
     #Data loader parameters
     p = 0.2
@@ -44,7 +44,7 @@ def task_2():
     weight_strength = 1
     weight_maps_bool = True
     #Load the data
-    images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size,weight_maps_bool)
+    images, masks, weight_maps = get_train_test_data(fold1, fold2, path, p,image_size, image_size)
     
     #Build the model
     model = u_net(base,image_size, image_size, img_ch, batch_normalization, SDRate, spatial_dropout,final_neurons, final_afun)

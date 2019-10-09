@@ -4,6 +4,10 @@ Created on Tue Sep 24 22:36:08 2019
 
 @author: looly
 """
+import tensorflow as tf
+
+tf.config.gpu.set_per_process_memory_fraction(0.3)
+tf.config.gpu.set_per_process_memory_growth(True)
 
 import pandas as pd
 import numpy as np
