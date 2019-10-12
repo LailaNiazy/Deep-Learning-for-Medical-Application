@@ -1,0 +1,2 @@
+model_checkpoint_path: "G_B2A_model_model_epoch_20.json"
+all_model_checkpoint_paths: "G_B2A_model_model_epoch_20.json"
