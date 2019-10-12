@@ -22,7 +22,7 @@ def task_2():
     base = 16
     image_size = 240
     img_ch = 1
-    batch_size =8
+    batch_size =1
     LR = 0.00001
     SDRate = 0.5
     batch_normalization = True
