@@ -20,7 +20,7 @@ def task_2():
 
     #Model parameters
     base = 16
-    image_size = 240
+    image_size = 60
     img_ch = 1
     batch_size =1
     LR = 0.00001

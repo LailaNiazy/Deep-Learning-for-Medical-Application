@@ -1,0 +1,2 @@
+    
+ [ {"img_h" : 240, "img_w" : 240, "LR" : 0.00001,  "base" : 32, "batch_size" : 8,"epochs": 150, "spatial_dropout" : "True", "SDRate" : 0.5, "batch_normalization" : "True", "data_augmentation" = "True"}, {"img_h" : 240, "img_w" : 240, "LR" : 0.00001,  "base" : 16, "batch_size" : 8, "epochs": 150, "spatial_dropout" : "True", "SDRate" : 0.5, "batch_normalization" : "True", "data_augmentation" = "True"}], 

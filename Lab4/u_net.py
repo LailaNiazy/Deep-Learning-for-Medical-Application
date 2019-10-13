@@ -13,7 +13,9 @@ from tensorflow.keras.layers import BatchNormalization, SpatialDropout2D
 from tensorflow.keras.layers import MaxPooling2D
 
 def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatial_dropout, final_neurons, final_afun):
+    
     inputs = Input((img_height, img_width, img_ch))
+    
     inputs2 = Input((img_height, img_width, img_ch))
 
     ## Contraction
