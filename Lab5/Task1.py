@@ -7,7 +7,7 @@ Created on Tue Sep 24 22:36:08 2019
 from tensorflow.keras.optimizers import Adam
 from LSTM_model import model_LSTM
 from plotter import plotter
-from data_loader import data_loader
+from Data_Loader_Task1 import data_loader
 
 
 def task_1():
@@ -33,6 +33,6 @@ def task_1():
     predicted_stock_price = model.predict(X_val)
     
     #plot the loss, mae curve and stock_price curve
-    plotter(History, predicted_stock_price, 1)
+    plotter(History, '1', predicted_stock_price)
     
-    return predicted_stock_price
+    

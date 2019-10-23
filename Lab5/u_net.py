@@ -154,9 +154,6 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     # up-sampling:
     c10 = Conv2DTranspose(filters=Base*8,kernel_size= (3, 3), strides=(2, 2), padding='same')(a9)
     # reshaping:
-  #  x1 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 8))(a8)
-  #  x2 = Reshape(target_shape=(1, np.int32(img_height/ 8), np.int32(img_width / 8), Base * 8))(c10)
-    print('here')
     x1 = Reshape(target_shape=(1, np.int32(img_height/8), np.int32(img_width/8), Base * 8))(a8)
     x2 = Reshape(target_shape=(1, np.int32(img_height/8), np.int32(img_width/8), Base * 8))(c10)
     # concatenation:
@@ -195,9 +192,6 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     # up-sampling:
     c13 = Conv2DTranspose(filters=Base*4, kernel_size=(2,2), strides=(2,2), padding='same')(a11)
     # reshaping:
- #   x3 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8),Base * 4))(a6)
- #   x4 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 4))(c13)
-    print('here')
     x3 = Reshape(target_shape=(1, np.int32(img_height/4), np.int32(img_width/4),Base * 4))(a6)
     x4 = Reshape(target_shape=(1, np.int32(img_height/4), np.int32(img_width/4), Base * 4))(c13)
     # concatenation:
@@ -236,9 +230,6 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     c16 = Conv2DTranspose(filters=Base*2,
                      kernel_size=(2,2), strides=(2,2), padding='same')(a13)
     # reshaping:
-   # x5 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base * 2))(a4)
-   # x6 = Reshape(target_shape=(1, np.int32(img_height/ 8), np.int32(img_width / 8), Base * 2))(c16)
-    print('here')
     x5 = Reshape(target_shape=(1, np.int32(img_height/2), np.int32(img_width/2), Base * 2))(a4)
     x6 = Reshape(target_shape=(1, np.int32(img_height/2), np.int32(img_width/2), Base * 2))(c16)
     # concatenation:
@@ -278,9 +269,6 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     c19 = Conv2DTranspose(filters=Base,
                      kernel_size=(2,2), strides=(2,2), padding='same')(a15)
     # reshaping:
-   # x7 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width / 8), Base))(a2)
-   # x8 = Reshape(target_shape=(1, np.int32(img_height / 8), np.int32(img_width/ 8), Base))(c19)
-    print('here')
     x7 = Reshape(target_shape=(1, np.int32(img_height), np.int32(img_width), Base))(a2)
     x8 = Reshape(target_shape=(1, np.int32(img_height), np.int32(img_width), Base))(c19)
     # concatenation:

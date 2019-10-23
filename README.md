@@ -16,6 +16,8 @@ For task 5, there are 5a & 5b subtasks
 
 Lab 4 instructions:
 
-Type in the terminal -> "python Main.py"
+Type in the terminal -> "python Main.py" and choose task number
 
 Lab 5 instructions:
+
+Type in the terminal -> "python Main.py" and choose task number

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Sep 24 22:32:27 2019
-
 """
 
 import tensorflow as tf
 
 
-tf.config.gpu.set_per_process_memory_fraction(0.3)
-tf.config.gpu.set_per_process_memory_growth(True)
+#tf.config.gpu.set_per_process_memory_fraction(0.3)
+#tf.config.gpu.set_per_process_memory_growth(True)
 
 ##image loader
 
@@ -51,7 +50,6 @@ def get_train_data_shuffled(images, masks, p):
 
     images, masks = shuffle(images,masks)
     
-    #train_x, test_x, train_y, test_y = train_test_split(images,masks,test_size = p)
 
     return images, masks
 
@@ -68,7 +66,7 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
     for i in range(len(train_x)):
         image_name = train_x[i]
         img = imread(image_name, as_grey=True)
-        img = resize(img, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
+        img = resize(img, (img_h, img_w), anti_aliasing = True).astype('float32')
         train_img.append([np.array(img)]) 
         
         mask_name = train_y[i]
@@ -80,13 +78,6 @@ def data_loader(fold1, fold2, data_path, p,img_h, img_w):
             print('Reading: {0}/{1}  of train images'.format(i, len(train_x)))
             print("Readin image {} and mask {}".format(image_name,mask_name))
     return train_img, train_mask
-"""
-    for j in range(len(train_y)):
-        mask_name = train_y[j]
-        mask = imread(mask_name, as_grey=True)
-        mask = resize(mask, (img_h, img_w), anti_aliasing = False,preserve_range=True, order = 0).astype('float32')
-        train_mask.append([np.array(mask)])
-    """
         
 
 def create_weight_map(mask, radius, i):
@@ -104,16 +95,6 @@ def create_weight_map(mask, radius, i):
     # substract the eroded image from the dilated image
     substraction = dilate-erosion
     
-    # save the substraction
-   # cv2.imwrite('weight_map_{}.jpg'.format(i),substraction)
-    
-    #cv2.imshow('image', substraction)
-#    mask_dilated = sitk.GrayscaleDilate(mask,radius)
- #   mask_eroded = sitk.GrayscaleErode(mask,radius)
-  #  mask_boundary = sitk.Subtract(mask_dilated,mask_eroded)
-    
-    # save the substraction
-   # scipy.misc.imsave('weight_map_{}.jpg'.format(i),mask_boundary)
 
     return substraction
  
@@ -136,8 +117,7 @@ def get_train_test_data(fold1, fold2, data_path, p,img_h, img_w):
     
     Train_Img = np.expand_dims(Train_Img, axis = 3)  
     Train_Label = np.expand_dims(Train_Label, axis = 3) 
+    Weight_Map = np.expand_dims(Weight_Map, axis = 3) 
 
-    
-    print(Train_Img.shape)
    
     return Train_Img, Train_Label, Weight_Map
