@@ -12,12 +12,12 @@ from tensorflow.keras.layers import Conv2D, Input, concatenate, Conv2DTranspose
 from tensorflow.keras.layers import BatchNormalization, SpatialDropout2D
 from tensorflow.keras.layers import MaxPooling2D
 
-def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatial_dropout, final_neurons, final_afun):
+def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatial_dropout, final_neurons, final_afun, weighted):
     
     inputs = Input((img_height, img_width, img_ch))
-    
-    inputs2 = Input((img_height, img_width, img_ch))
-
+    #in case we use weight maps we need two inputs and two outputs
+    if weighted:
+        inputs2 = Input((img_height, img_width, img_ch))
     ## Contraction
     # Conv Block 1
     
@@ -279,7 +279,11 @@ def u_net(Base,img_height, img_width, img_ch, batchNormalization, SDRate, spatia
     c22 = Conv2D(final_neurons, kernel_size=(3,3), strides=(1,1), padding='same')(a17)
     a18 = Activation(final_afun)(c22)
     
-    model = Model(inputs,a18)
-    
- #   model.summary()
-    return model
+    if weighted:
+        model = Model([inputs,inputs2],a18)
+        model.summary()
+        return model, inputs2
+    else:
+        model = Model(inputs,a18)
+        model.summary()
+        return model
